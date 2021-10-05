@@ -3222,6 +3222,38 @@ fn test_constants() {
     assert_eq!("2", Decimal::TWO.to_string());
 }
 
+#[cfg(feature = "borsh-feature")]
+mod borsh {
+    use super::*;
+    use ::borsh::{BorshDeserialize, BorshSchema, BorshSerialize};
+
+    #[test]
+    fn test_borsh_serialize() {
+        let x = Decimal::new(-100, 2);
+        let mut buffer: Vec<u8> = Vec::new();
+        BorshSerialize::serialize(&x, &mut buffer);
+        let y = BorshDeserialize::deserialize(&mut buffer.as_slice()).unwrap();
+        assert_eq!(x, y);
+
+        // #[derive(BorshSerialize)]
+        // struct MyBorshSerializableStruct {
+        //     value: String,
+        // }
+
+        // let x = MyBorshSerializableStruct { value: "hello".to_owned() };
+        // let mut buffer: Vec<u8> = Vec::new();
+        // x.serialize(&mut buffer).unwrap();
+        // let single_serialized_buffer_len = buffer.len();
+
+        // x.serialize(&mut buffer).unwrap();
+        // assert_eq!(buffer.len(), single_serialized_buffer_len * 2);
+
+        // let mut buffer: Vec<u8> = vec![0; 1024 + single_serialized_buffer_len];
+        // let mut buffer_slice_enough_for_the_data = &mut buffer[1024..1024 + single_serialized_buffer_len];
+        // x.serialize(&mut buffer_slice_enough_for_the_data).unwrap();
+    }
+}
+
 // Mathematical features
 #[cfg(feature = "maths")]
 mod maths {
